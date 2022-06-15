@@ -17,6 +17,31 @@
   * [Contact](#contact)
 
 
+## Usage
+
+### Demo
+```shell
+    python scripts/visualize.py --workers 12  \
+    --model-file-complete=barc_new_v2/model_best.pth.tar \
+    --config barc_cfg_test.yaml \
+    --save-images True
+```
+
+### Training
+```shell
+    python scripts/train.py --workers 12 --checkpoint=barc_new_v2 \
+    train \
+    --model-file-hg dogs_hg8_ksp_24_sev12_v3/model_best.pth.tar \
+    --model-file-3d Normflow_CVPR_set8_v3k2_v1/checkpoint.pth.tar
+```
+
+### Inference
+```shell
+    python scripts/test.py --workers 12  \
+    --model-file-complete=barc_new_v2/model_best.pth.tar \
+    -- --config barc_cfg_visualization.yaml
+```
+
 ## Description
 
 **B**reed **A**ugmented **R**egression using **C**lassification (BARC) is a method for dog pose and shape estimation.
