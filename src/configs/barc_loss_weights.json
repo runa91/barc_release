@@ -1,0 +1,30 @@
+
+
+
+{
+    "breed_options": [
+        "4"             
+    ],
+    "breed": 5.0,
+    "class": 1.0,
+    "models3d": 1.0,
+    "keyp": 0.2,
+    "silh": 50.0,
+    "shape_options": [
+        "smal",
+        "limbs7"
+    ],
+    "shape": [
+        1e-05,
+        1
+    ],
+    "poseprior_options": [
+        "normalizing_flow_tiger_logprob"
+    ],
+    "poseprior": 0.1,
+    "poselegssidemovement": 10.0,
+    "flength": 1.0,
+    "partseg": 0,
+    "shapedirs": 0,
+    "pose_0": 0.0
+}

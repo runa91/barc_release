@@ -1,0 +1,23 @@
+
+# pretrained_modelpath: os.path.join(cfg.barc_dir, 'checkpoint', 'CVPR_dogs3_V0_side_v6_c', 'model_best.pth.tar')
+
+paths:
+  ROOT_OUT_PATH: '/is/cluster/work/nrueegg/dog_project/results_pytorch-dogs-inference/results_iscl_inf/'
+  ROOT_CHECKPOINT_PATH: '/is/cluster/work/nrueegg/dog_project/pytorch-dogs-inference/checkpoint/'
+  MODELPATH_NORMFLOW: '/ps/scratch/nrueegg/new_projects/Animals/dog_project/pose_prior_normalizing_flow/model_v1/output/rgbddog_v3_model.pt'
+
+
+optim:
+  LR: 5e-4
+  SCHEDULE: [150, 175, 200]
+  GAMMA: 0.1
+  MOMENTUM: 0
+  WEIGHT_DECAY: 0
+  EPOCHS: 220
+  BATCH_SIZE: 12       # keep 12 (needs to be an even number, as we have a custom data sampler)
+  TRAIN_PARTS: 'all_without_shapedirs'
+
+data:
+  DATASET: 'stanext24'
+  SHORTEN_VAL_DATASET_TO: 600  # this is faster  
+  VAL_OPT: 'val'
