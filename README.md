@@ -6,7 +6,7 @@
   * [Description](#description)
   * [Installation](#installation)
     * [Dependencies](#dependencies)
-    * [Preparing the data](#preparing-the-data)
+    * [Data Preparation](#data-preparation)
   * [Usage](#usage)
     * [Demo](#demo)
     * [Training](#training)
@@ -17,12 +17,37 @@
   * [Contact](#contact)
 
 
+
+## Installation
+
+### Dependencies
+
+### Data Preparation
+
+All necessary data be downloaded from https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S. A folder named 'checkpoint' contains pretrained models. Copy this folder to the main folder of this project. A folder named 'stanext_related_data' contains information related to the dataset. Please copy it to data/stanext_related_data.
+
+Your folder structure should look as follows:
+```bash
+folder
+├── data
+│   └── breed_data
+│   └── smal_data
+│   └── statistics
+│   └── stanext_related_data
+├── datasets
+│   └── stanext_related_data
+├── scripts
+│   └── ...
+├── src
+│   └── ...
+```
+
 ## Usage
 
 ### Demo
 ```shell
     python scripts/visualize.py --workers 12  \
-    --model-file-complete barc_new_v2/model_best.pth.tar \
+    --model-file-complete cvpr_complete/model_best.pth.tar \
     --config barc_cfg_test.yaml \
     --save-images True
 ```
@@ -31,14 +56,14 @@
 ```shell
     python scripts/train.py --workers 12 --checkpoint barc_new_v2 \
     train \
-    --model-file-hg dogs_hg8_ksp_24_sev12_v3/model_best.pth.tar \
-    --model-file-3d Normflow_CVPR_set8_v3k2_v1/checkpoint.pth.tar
+    --model-file-hg cvpr_hg_pret/checkpoint.pth.tar \
+    --model-file-3d cvpr_normflow_pret/checkpoint.pth.tar
 ```
 
 ### Inference
 ```shell
     python scripts/test.py --workers 12  \
-    --model-file-complete barc_new_v2/model_best.pth.tar \
+    --model-file-complete cvpr_complete/model_best.pth.tar \
     -- --config barc_cfg_visualization.yaml
 ```
 
