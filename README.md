@@ -7,6 +7,7 @@
   * [Installation](#installation)
     * [Dependencies](#dependencies)
     * [Data Preparation](#data-preparation)
+    * [Configurations](#configurations)
   * [Usage](#usage)
     * [Demo](#demo)
     * [Training](#training)
@@ -31,6 +32,8 @@
 
 All necessary data be downloaded from https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S. A folder named 'checkpoint' contains pretrained models. Copy this folder to the main folder of this project. A folder named 'stanext_related_data' contains information related to the dataset. Please copy it to data/stanext_related_data.
 
+Download the Stanford Extra image dataset from https://github.com/benjiebob/StanfordExtra and store it in datasets/StanfordExtra_V12. 
+
 Your folder structure should look as follows:
 ```bash
 folder
@@ -40,12 +43,21 @@ folder
 │   └── statistics
 │   └── stanext_related_data
 ├── datasets
-│   └── stanext_related_data
+│   └── test_image_crops
+│   ├── StanfordExtra_V12
+│   │   └── StanExtV12_Images
+│   │   └── labels
 ├── scripts
 │   └── ...
 ├── src
 │   └── ...
 ```
+
+### Configurations
+
+All configuration files can be found in src/configs. You will need to adjust paths in barc_cfg_{train,test,visualization}.yaml and dataset_path_configs.py. If desired you can change the weights for different loss functions used at training time, see barc_loss_weights.json. I do not recommend changing zero-value weights to non-zero values, as most of the unused loss functions were removed.
+
+
 
 ## Usage
 
