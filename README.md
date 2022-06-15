@@ -64,7 +64,7 @@ folder
 ```shell
     python scripts/test.py --workers 12  \
     --model-file-complete cvpr_complete/model_best.pth.tar \
-    -- --config barc_cfg_visualization.yaml
+    --config barc_cfg_visualization.yaml
 ```
 
 ## Description
