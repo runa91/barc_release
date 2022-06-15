@@ -3,7 +3,6 @@
 
 
 ## Table of Contents
-  * [License](#license)
   * [Description](#description)
   * [Installation](#installation)
     * [Dependencies](#dependencies)
@@ -13,22 +12,10 @@
     * [Training](#training)
     * [Inference](#inference)
   * [Citation](#citation)
+  * [License](#license)
   * [Acknowledgments](#acknowledgments)
   * [Contact](#contact)
 
-## License
-
-Software Copyright License for non-commercial scientific research purposes.
-Please read carefully the following [terms and conditions](LICENSE) and any accompanying
-documentation before you download and/or use BARC data, model and
-software, (the "Data & Software"), including 3D meshes, images, videos,
-textures, software, scripts, and animations. By downloading and/or using the
-Data & Software (including downloading, cloning, installing, and any other use
-of the corresponding github repository), you acknowledge that you have read
-these [terms and conditions](LICENSE), understand them, and agree to be bound by them. If
-you do not agree with these [terms and conditions](LICENSE), you must not download and/or
-use the Data & Software. Any infringement of the terms of this agreement will
-automatically terminate your rights under this [License](LICENSE).
 
 ## Description
 
@@ -46,6 +33,20 @@ If you find this Model & Software useful in your research we would kindly ask yo
     year = {2022}
 }
 ```
+
+## License
+
+Software Copyright License for non-commercial scientific research purposes.
+Please read carefully the following [terms and conditions](LICENSE) and any accompanying
+documentation before you download and/or use BARC data, model and
+software, (the "Data & Software"), including 3D meshes, images, videos,
+textures, software, scripts, and animations. By downloading and/or using the
+Data & Software (including downloading, cloning, installing, and any other use
+of the corresponding github repository), you acknowledge that you have read
+these [terms and conditions](LICENSE), understand them, and agree to be bound by them. If
+you do not agree with these [terms and conditions](LICENSE), you must not download and/or
+use the Data & Software. Any infringement of the terms of this agreement will
+automatically terminate your rights under this [License](LICENSE).
 
 ## Acknowledgments
 
