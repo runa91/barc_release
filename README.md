@@ -18,6 +18,11 @@
 
 
 
+## Description
+
+**B**reed **A**ugmented **R**egression using **C**lassification (BARC) is a method for dog pose and shape estimation.
+
+
 ## Installation
 
 ### Dependencies
@@ -66,10 +71,6 @@ folder
     --model-file-complete cvpr_complete/model_best.pth.tar \
     --config barc_cfg_visualization.yaml
 ```
-
-## Description
-
-**B**reed **A**ugmented **R**egression using **C**lassification (BARC) is a method for dog pose and shape estimation.
 
 ## Citation
 
