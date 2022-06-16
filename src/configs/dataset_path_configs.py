@@ -7,7 +7,7 @@ import sys
 
 # stanext dataset
 # (1) path to stanext dataset
-STAN_V12_ROOT_DIR = '/ps/scratch/nrueegg/new_projects/Animals/data/dog_datasets/Stanford_Dogs_Dataset/StanfordExtra_V12/'
+STAN_V12_ROOT_DIR = '...../StanfordExtra_V12/'
 IMG_V12_DIR = os.path.join(STAN_V12_ROOT_DIR, 'StanExtV12_Images')		      
 JSON_V12_DIR = os.path.join(STAN_V12_ROOT_DIR, 'labels', "StanfordExtra_v12.json")    
 STAN_V12_TRAIN_LIST_DIR = os.path.join(STAN_V12_ROOT_DIR, 'labels', 'train_stanford_StanfordExtra_v12.npy')  
