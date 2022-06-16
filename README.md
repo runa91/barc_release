@@ -5,7 +5,7 @@
 ## Table of Contents
   * [Description](#description)
   * [Installation](#installation)
-    * [Dependencies](#dependencies)
+    * [Environment](#environment)
     * [Data Preparation](#data-preparation)
     * [Configurations](#configurations)
   * [Usage](#usage)
@@ -26,7 +26,20 @@
 
 ## Installation
 
-### Dependencies
+### Environment
+
+The code has been tested with CUDA 10.1, CuDNN 7.5, Python 3.7 and PyTorch 1.6.0. 
+```shell
+    conda create -n "conda_barc" python=3.7.6 ipython
+    conda activate conda_barc
+    conda install pytorch==1.6.0 torchvision cudatoolkit=10.1 -c pytorch
+```
+
+To install the remaining dependencies run the following command:
+```shell
+    pip install -r requirements.txt
+```
+
 
 ### Data Preparation
 
