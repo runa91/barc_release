@@ -30,7 +30,7 @@
 
 ### Data Preparation
 
-All necessary data be downloaded from https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S. A folder named 'checkpoint' contains pretrained models. Copy this folder to the main folder of this project. A folder named 'stanext_related_data' contains information related to the dataset. Please extract the zip file and copy it to data/stanext_related_data.
+All necessary data be downloaded [here](https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S). A folder named 'checkpoint' contains pretrained models, copy it to the main folder of this project. A folder named 'stanext_related_data.zip' contains information related to the dataset. Please extract the zip file and copy it to data/stanext_related_data.
 
 Download the Stanford Extra image dataset from https://github.com/benjiebob/StanfordExtra and store it in datasets/StanfordExtra_V12. 
 
