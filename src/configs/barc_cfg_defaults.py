@@ -4,19 +4,17 @@ import argparse
 import yaml
 import os
 
-_C = CN()
-
 abs_barc_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..',))
+
+_C = CN()
 _C.barc_dir = abs_barc_dir
 _C.device = 'cuda'
 
-
 ## path settings
 _C.paths = CN()
-_C.paths.ROOT_OUT_PATH = '...../results/'
-_C.paths.ROOT_CHECKPOINT_PATH = '...../checkpoint/'
-_C.paths.MODELPATH_NORMFLOW = '...../checkpoint/cvpr_normflow_pret/rgbddog_v3_model.pt'
-
+_C.paths.ROOT_OUT_PATH = abs_barc_dir + '/results/'
+_C.paths.ROOT_CHECKPOINT_PATH = abs_barc_dir + '/checkpoint/'
+_C.paths.MODELPATH_NORMFLOW = abs_barc_dir + '/checkpoint/cvpr_normflow_pret/rgbddog_v3_model.pt'
 
 ## parameter settings
 _C.params = CN()
@@ -45,7 +43,6 @@ _C.params.VLIN = 2
 _C.params.STRUCTURE_Z_TO_B = 'lin'
 _C.params.N_Z_FREE = 64
 _C.params.PCK_THRESH = 0.15    
-
 
 ## optimization settings
 _C.optim = CN()
