@@ -30,7 +30,7 @@
 
 ### Data Preparation
 
-All necessary data be downloaded from https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S. A folder named 'checkpoint' contains pretrained models. Copy this folder to the main folder of this project. A folder named 'stanext_related_data' contains information related to the dataset. Please copy it to data/stanext_related_data.
+All necessary data be downloaded from https://owncloud.tuebingen.mpg.de/index.php/s/Pw2yoWnAmwcDb9S. A folder named 'checkpoint' contains pretrained models. Copy this folder to the main folder of this project. A folder named 'stanext_related_data' contains information related to the dataset. Please extract the zip file and copy it to data/stanext_related_data.
 
 Download the Stanford Extra image dataset from https://github.com/benjiebob/StanfordExtra and store it in datasets/StanfordExtra_V12. 
 
@@ -64,7 +64,7 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ### Demo
 ```shell
     python scripts/visualize.py --workers 12  \
-    --model-file-complete cvpr_complete/model_best.pth.tar \
+    --model-file-complete barc_complete/model_best.pth.tar \
     --config barc_cfg_test.yaml \
     --save-images True
 ```
@@ -73,14 +73,14 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ```shell
     python scripts/train.py --workers 12 --checkpoint barc_new_v2 \
     train \
-    --model-file-hg cvpr_hg_pret/checkpoint.pth.tar \
-    --model-file-3d cvpr_normflow_pret/checkpoint.pth.tar
+    --model-file-hg barc_hg_pret/checkpoint.pth.tar \
+    --model-file-3d barc_normflow_pret/checkpoint.pth.tar
 ```
 
 ### Inference
 ```shell
     python scripts/test.py --workers 12  \
-    --model-file-complete cvpr_complete/model_best.pth.tar \
+    --model-file-complete barc_complete/model_best.pth.tar \
     --config barc_cfg_visualization.yaml
 ```
 
