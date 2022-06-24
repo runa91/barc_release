@@ -50,15 +50,18 @@ Download the Stanford Extra image dataset from https://github.com/benjiebob/Stan
 Your folder structure should look as follows:
 ```bash
 folder
+├── checkpoint
+│   ├── barc_complete
+│   └── ...
 ├── data
-│   └── breed_data
-│   └── smal_data
-│   └── statistics
+│   ├── breed_data
+│   ├── smal_data
+│   ├── statistics
 │   └── stanext_related_data
 ├── datasets
-│   └── test_image_crops
+│   ├── test_image_crops
 │   ├── StanfordExtra_V12
-│   │   └── StanExtV12_Images
+│   │   ├── StanExtV12_Images
 │   │   └── labels
 ├── scripts
 │   └── ...
@@ -68,7 +71,7 @@ folder
 
 ### Configurations
 
-All configuration files can be found in src/configs. You will need to adjust paths in barc_cfg_{train,test,visualization}.yaml and dataset_path_configs.py. If desired you can change the weights for different loss functions used at training time, see barc_loss_weights.json. I do not recommend changing zero-value weights to non-zero values, as most of the unused loss functions were removed.
+All configuration files can be found in src/configs. You will need to adjust paths in barc_cfg_{train,test,visualization}.yaml and dataset_path_configs.py. If desired you can change the weights for different loss functions used at training time, see barc_loss_weights.json. We do not recommend changing zero-value weights to non-zero values, as most of the unused loss functions were removed.
 
 
 

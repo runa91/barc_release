@@ -124,7 +124,6 @@ def get_akc_but_not_stanext_partial_summary(summary):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 def main_load_dog_breed_classes(path_complete_abbrev_dict_v1, path_complete_summary_breeds_v1):
-    # import pdb; pdb.set_trace()
     with open(path_complete_abbrev_dict_v1, 'rb') as file:
         complete_abbrev_dict = pkl.load(file)
     with open(path_complete_summary_breeds_v1, 'rb') as file: 

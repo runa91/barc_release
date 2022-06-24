@@ -1,13 +1,13 @@
-pip install pytorch3d==0.2.5
-pip install kornia==0.4.0 
-pip install matplotlib
-pip install opencv-python
-pip install trimesh
-pip install scipy
-pip install chumpy
-pip install pymp
-pip install importlib-resources
-pip install pycocotools
-pip install openpyxl
-pip install dominate
-pip install git+https://github.com/runa91/FrEIA.git
+pytorch3d==0.2.5
+kornia==0.4.0 
+matplotlib
+opencv-python
+trimesh
+scipy
+chumpy
+pymp
+importlib-resources
+pycocotools
+openpyxl
+dominate
+git+https://github.com/runa91/FrEIA.git
