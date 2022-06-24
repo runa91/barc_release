@@ -81,13 +81,14 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ```shell
     python scripts/visualize.py --workers 12  \
     --model-file-complete barc_complete/model_best.pth.tar \
-    --config barc_cfg_test.yaml \
+    --config barc_cfg_visualization.yaml \
     --save-images True
 ```
 
 ### Training
 ```shell
     python scripts/train.py --workers 12 --checkpoint barc_new_v2 \
+    --config barc_cfg_train.yaml \
     train \
     --model-file-hg barc_hg_pret/checkpoint.pth.tar \
     --model-file-3d barc_normflow_pret/checkpoint.pth.tar
@@ -97,7 +98,7 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ```shell
     python scripts/test.py --workers 12  \
     --model-file-complete barc_complete/model_best.pth.tar \
-    --config barc_cfg_visualization.yaml
+    --config barc_cfg_test.yaml
 ```
 
 ## Citation
