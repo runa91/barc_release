@@ -3,7 +3,7 @@
 checkpoint
 debugging
 src/smal_pytorch/smal_data/optional
-datasets
+/datasets
 *_orig.py
 *copy.py
 
