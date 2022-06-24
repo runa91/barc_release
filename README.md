@@ -89,7 +89,7 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ```shell
     python scripts/train.py --workers 12 --checkpoint barc_new_v2 \
     --config barc_cfg_train.yaml \
-    train \
+    start \
     --model-file-hg barc_hg_pret/checkpoint.pth.tar \
     --model-file-3d barc_normflow_pret/checkpoint.pth.tar
 ```
