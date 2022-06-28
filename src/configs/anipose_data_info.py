@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 import json
 import numpy as np
+import os
 
 STATISTICS_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'statistics')
 STATISTICS_PATH = os.path.join(STATISTICS_DATA_DIR, 'statistics_modified_v1.json')
