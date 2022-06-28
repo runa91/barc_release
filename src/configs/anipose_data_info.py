@@ -3,6 +3,8 @@ from typing import List
 import json
 import numpy as np
 
+STATISTICS_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'statistics')
+STATISTICS_PATH = os.path.join(STATISTICS_DATA_DIR, 'statistics_modified_v1.json')
 
 @dataclass
 class DataInfo:
@@ -22,7 +24,8 @@ class DataInfo:
     pose_rot6d_mean: np.ndarray
     keypoint_weights: List[float]
 
-# SMAL samples 3d statistics 
+# SMAL samples 3d statistics
+#   statistics like mean values were calculated once when the project was started and they were not changed afterwards anymore
 def load_statistics(statistics_path):
     with open(statistics_path) as f:
         statistics = json.load(f)
@@ -38,22 +41,8 @@ def load_statistics(statistics_path):
                     }
     new_statistics['pose_rot6d_mean'] = new_statistics['pose_mean'][:, :, :2].reshape((-1, 6))
     return new_statistics
-statistics_path = '/ps/scratch/nrueegg/new_projects/Animals/data/smal_samples/dogs_set_torch_1/statistics_modified_v1.json'
-STATISTICS = load_statistics(statistics_path)
+STATISTICS = load_statistics(STATISTICS_PATH)
 
-# for keypoint names see: https://github.com/benjiebob/StanfordExtra/blob/master/keypoint_definitions.csv
-# ..., 'Left_eye', 'Right_eye', 'Withers', 'Throat']       # the last 4 keypoints are in the animal_pose dataset, but not StanfordExtra
-'''StanExt_JOINT_NAMES = [
-    'Left_front_leg_paw', 'Left_front_leg_middle_joint', 'Left_front_leg_top', 
-    'Left_rear_leg_paw', 'Left_rear_leg_middle_joint', 'Left_rear_leg_top',
-    'Right_front_leg_paw', 'Right_front_leg_middle_joint', 'Right_front_leg_top',
-    'Right_rear_leg_paw', 'Right_rear_leg_middle_joint', 'Right_rear_leg_top',
-    'Tail_start', 'Tail_end', 'Base_of_left_ear', 'Base_of_right_ear', 
-    'Nose', 'Chin', 'Left_ear_tip', 'Right_ear_tip']'''
-
-# old anipose not swapped, hflip_indices=[1, 0, 2, 8, 4, 9, 10, 13, 3, 5, 6, 11, 12, 7, 15, 14, 17, 16, 19, 18],
-
-# see also src/smal_pytorch/smpl_models/SMAL_configs.py
 AniPose_JOINT_NAMES_swapped = [
     'L_F_Paw', 'L_F_Knee', 'L_F_Elbow', 
     'L_B_Paw', 'L_B_Knee', 'L_B_Elbow', 
@@ -63,10 +52,7 @@ AniPose_JOINT_NAMES_swapped = [
     'Nose', '_Chin_', '_Left_ear_tip_', '_Right_ear_tip_',
     'L_Eye', 'R_Eye', 'Withers', 'Throat']
 
-
-KEYPOINT_WEIGHTS = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0]  
-
-
+KEYPOINT_WEIGHTS = [3, 2, 2, 3, 2, 2, 3, 2, 2, 3, 2, 2, 3, 3, 2, 2, 3, 1, 2, 2]      
 
 COMPLETE_DATA_INFO = DataInfo(
     rgb_mean=[0.4404, 0.4440, 0.4327],      # not sure
