@@ -9,7 +9,6 @@ import os
 import pickle as pkl
 import json
 import numpy as np
-from smpl_webuser.serialization import load_model
 import pickle as pkl
 
 import os
@@ -73,76 +72,11 @@ def align_smal_template_to_symmetry_axis(v, subtract_mean=True):
     right_inds = RIGHT_INDS
     center_inds = CENTER_INDS
     v[right_inds, :] = np.array([1,-1,1])*v[left_inds, :]
-
     try:
         assert(len(left_inds) == len(right_inds))
     except:
         import pdb; pdb.set_trace()
-
     return v, left_inds, right_inds, center_inds
 
-def load_smal_model(model_name='my_smpl_00781_4_all.pkl'):
-    model_path = os.path.join(model_dir, model_name)
-
-    model = load_model(model_path)
-    v = align_smal_template_to_symmetry_axis(model.r.copy())
-    return v, model.f
-
-def get_horse_template(model_name='my_smpl_00781_4_all.pkl', data_name='my_smpl_data_00781_4_all.pkl'):
-    model_path = os.path.join(model_dir, model_name)
-    model = load_model(model_path)
-    nBetas = len(model.betas.r)
-    data_path = os.path.join(model_dir, data_name)     # os.path.join(model_dir, 'my_smpl_data_00781_4_all.pkl')
-    # data = pkl.load(open(data_path))
-    try:
-        with open(data_path, 'r') as f:
-            data = pkl.load(f)
-    except (UnicodeDecodeError, TypeError) as e:
-        with open(data_path, 'rb') as file:
-            u = pkl._Unpickler(file)
-            u.encoding = 'latin1'
-            data = u.load()
-    # Select average zebra/horse
-    betas = data['cluster_means'][2][:nBetas]
-    model.betas[:] = betas
-    v = model.r.copy()
-    return v
-
-def get_dog_template(model_name='my_smpl_00781_4_all.pkl', data_name='my_smpl_data_00781_4_all.pkl'):
-    model_path = os.path.join(model_dir, model_name)
-    model = load_model(model_path)
-    nBetas = len(model.betas.r)
-    data_path = os.path.join(model_dir, data_name)     # os.path.join(model_dir, 'my_smpl_data_00781_4_all.pkl')
-    # data = pkl.load(open(data_path))
-    try:
-        with open(data_path, 'r') as f:
-            data = pkl.load(f)
-    except (UnicodeDecodeError, TypeError) as e:
-        with open(data_path, 'rb') as file:
-            u = pkl._Unpickler(file)
-            u.encoding = 'latin1'
-            data = u.load()
-    # Select average dog
-    betas = data['cluster_means'][1][:nBetas]
-    model.betas[:] = betas
-    v = model.r.copy()
-    return v
-
-def get_neutral_template(model_name='my_smpl_00781_4_all.pkl', data_name='my_smpl_data_00781_4_all.pkl'):
-    model_path = os.path.join(model_dir, model_name)
-    model = load_model(model_path)
-    nBetas = len(model.betas.r)
-    data_path = os.path.join(model_dir, data_name)     # os.path.join(model_dir, 'my_smpl_data_00781_4_all.pkl')
-    # data = pkl.load(open(data_path))
-    try:
-        with open(data_path, 'r') as f:
-            data = pkl.load(f)
-    except (UnicodeDecodeError, TypeError) as e:
-        with open(data_path, 'rb') as file:
-            u = pkl._Unpickler(file)
-            u.encoding = 'latin1'
-            data = u.load()
-    v = model.r.copy()
-    return v
 
 

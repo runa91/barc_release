@@ -1,8 +1,8 @@
 
 paths:
-  ROOT_OUT_PATH: '...../results/'
-  ROOT_CHECKPOINT_PATH: '...../checkpoint/'
-  MODELPATH_NORMFLOW: '...../checkpoint/cvpr_normflow_pret/rgbddog_v3_model.pt'
+  ROOT_OUT_PATH: './results/'
+  ROOT_CHECKPOINT_PATH: './checkpoint/'
+  MODELPATH_NORMFLOW: './checkpoint/barc_normflow_pret/rgbddog_v3_model.pt'
 
 optim:
   LR: 5e-4
@@ -16,5 +16,5 @@ optim:
 
 data:
   DATASET: 'stanext24'
-  SHORTEN_VAL_DATASET_TO: 600  # this is faster  
+  SHORTEN_VAL_DATASET_TO: 600  # this is faster as we do not evaluate on the whole validation set  
   VAL_OPT: 'val'

@@ -78,14 +78,15 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ## Usage
 
 ### Demo
+In order to run our pretrained model on new sample images, prepare image crops and put them into the folder datasets/test_image_crops. The crops can have arbitrary rectangular shape, but should show the dog more or less in the center of the image. Please have a look at the provided example image.
 ```shell
     python scripts/visualize.py --workers 12  \
     --model-file-complete barc_complete/model_best.pth.tar \
     --config barc_cfg_visualization.yaml \
-    --save-images True
 ```
 
 ### Training
+You can train a full new model using the following command. Pretrained weights for the stacked hourglass and the 3d pose branch (including the normalizing flow pose prior) will be loaded. 
 ```shell
     python scripts/train.py --workers 12 --checkpoint barc_new_v2 \
     --config barc_cfg_train.yaml \
@@ -95,10 +96,12 @@ All configuration files can be found in src/configs. You will need to adjust pat
 ```
 
 ### Inference
+In order to reproduce the results as listed in our [paper](https://arxiv.org/pdf/2203.15536.pdf), run the following command:
 ```shell
     python scripts/test.py --workers 12  \
     --model-file-complete barc_complete/model_best.pth.tar \
     --config barc_cfg_test.yaml
+    --save-images True
 ```
 
 ## Citation

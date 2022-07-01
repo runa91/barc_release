@@ -43,7 +43,7 @@ from torch.autograd import Variable
 import pickle as pkl 
 from .batch_lbs import batch_rodrigues, batch_global_rigid_transformation, batch_global_rigid_transformation_biggs, get_bone_length_scales, get_beta_scale_mask
 
-from .smal_basics import align_smal_template_to_symmetry_axis, get_dog_template, get_neutral_template, get_symmetry_indices
+from .smal_basics import align_smal_template_to_symmetry_axis, get_symmetry_indices
 
 import os
 import sys
@@ -83,13 +83,7 @@ class SMAL(nn.Module):
         self.register_buffer('faces', torch.from_numpy(self.f.astype(int)))
 
         # get the correct template (mean shape)
-        if template_name=='dog':
-            print('We have replaced the original SMAL model by our own dog model! Nevertheless, this code would in theory still work...')
-            # raise ValueError
-            assert (os.path.basename(pkl_path) == 'my_smpl_00781_4_all.pkl')
-            v_template = get_dog_template(model_name='my_smpl_00781_4_all.pkl', data_name='my_smpl_data_00781_4_all.pkl')
-            v, self.left_inds, self.right_inds, self.center_inds = align_smal_template_to_symmetry_axis(v_template)
-        elif template_name=='neutral':
+        if template_name=='neutral':
             v_template = dd['v_template'] 
             v = v_template
         else:

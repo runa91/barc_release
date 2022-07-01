@@ -1,8 +1,8 @@
 
 paths:
-  ROOT_OUT_PATH: '...../results/'
-  ROOT_CHECKPOINT_PATH: '...../checkpoint/'
-  MODELPATH_NORMFLOW: '...../checkpoint/cvpr_normflow_pret/rgbddog_v3_model.pt'
+  ROOT_OUT_PATH: './results/'
+  ROOT_CHECKPOINT_PATH: './checkpoint/'
+  MODELPATH_NORMFLOW: './checkpoint/barc_normflow_pret/rgbddog_v3_model.pt'
 
 optim:
   BATCH_SIZE: 24      

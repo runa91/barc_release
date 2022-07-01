@@ -72,33 +72,19 @@ def main(args):
     # prepare output folder name
     prefix = cfg.data.DATASET + '_'
     epoch = checkpoint_complete['epoch']
-    if cfg.data.VAL_OPT == 'test':
-        if 'model_best' in path_model_file_complete: 
-            model_file_complete_last = path_model_file_complete.replace('model_best.pth.tar', 'checkpoint.pth.tar')
-            final_epoch = torch.load(model_file_complete_last)['epoch']
-            out_sub_name = prefix + 'vis_test_best_until_e' + str(final_epoch)
+    if 'model_best' in path_model_file_complete: 
+        model_file_complete_last = path_model_file_complete.replace('model_best.pth.tar', 'checkpoint.pth.tar')
+        if os.path.isfile(model_file_complete_last):
+            final_epoch = 'e' + str(torch.load(model_file_complete_last)['epoch'])
         else:
-            out_sub_name = prefix + 'vis_test_e' + str(epoch)
-    elif cfg.data.VAL_OPT == 'val':
-        if 'model_best' in path_model_file_complete: 
-            model_file_complete_last = path_model_file_complete.replace('model_best.pth.tar', 'checkpoint.pth.tar')
-            final_epoch = torch.load(model_file_complete_last)['epoch']
-            out_sub_name = prefix + 'val_best_until_e' + str(final_epoch)
-        else:
-            out_sub_name = prefix + 'vis_val_e' + str(epoch)
-    elif cfg.data.VAL_OPT == 'train':
-        if 'model_best' in path_model_file_complete: 
-            model_file_complete_last = path_model_file_complete.replace('model_best.pth.tar', 'checkpoint.pth.tar')
-            final_epoch = torch.load(model_file_complete_last)['epoch']
-            out_sub_name = prefix + 'vis_train_best_until_e' + str(final_epoch)
-        else:
-            out_sub_name = prefix + 'vis_train_e' + str(epoch)
+            final_epoch = 'end'
+        out_sub_name = prefix + cfg.data.VAL_OPT + '_best_until_' + final_epoch
     else:
-        out_sub_name = prefix + 'vis_' + cfg.data.VAL_OPT + '_' + str(epoch)
+        final_epoch = 'e' + str(epoch)
+        out_sub_name = prefix + cfg.data.VAL_OPT + '_' + final_epoch
     save_imgs_path = os.path.join(os.path.dirname(path_model_file_complete).replace(cfg.paths.ROOT_CHECKPOINT_PATH, cfg.paths.ROOT_OUT_PATH + 'results/'), out_sub_name)
     print('epoch: ' + str(epoch))
     print('best IoU score: ' + str(checkpoint_complete['best_acc']*100))
-    print('pck threshold: ' + str(cfg.params.PCK_THRESH))
     print('path to save images: ' + save_imgs_path)
     if not os.path.exists(save_imgs_path):
         os.makedirs(save_imgs_path)
