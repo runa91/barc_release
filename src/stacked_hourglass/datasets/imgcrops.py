@@ -27,14 +27,19 @@ class ImgCrops(data.Dataset):
         assert is_train == False
         assert do_augment == 'default' or do_augment == False
         self.inp_res = inp_res
-        if img_crop_folder == 'default':
-            self.folder_imgs = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'datasets', 'test_image_crops') 
-        else:
-            self.folder_imgs = img_crop_folder
+        # if img_crop_folder == 'default':
+        #     self.folder_imgs = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'datasets', 'test_image_crops') 
+        # else:
+        #     self.folder_imgs = img_crop_folder
+        self.folder_imgs = image_path
         name_list = glob.glob(os.path.join(self.folder_imgs, '*.png')) + glob.glob(os.path.join(self.folder_imgs, '*.jpg')) + glob.glob(os.path.join(self.folder_imgs, '*.jpeg'))
+        # print(f"{os.path.join(image_path, '*.png')}    {os.path.join(image_path, '*.jpg')}    {os.path.join(image_path, '*.jpeg')}")
         name_list = sorted(name_list)
+        # print(f"name_list:{name_list}")
+
         self.test_name_list = [name.split('/')[-1] for name in name_list]
         print('len(dataset): ' + str(self.__len__()))
+        print(f"self.test_name_list len:{len(self.test_name_list)}")
 
     def __getitem__(self, index):
         img_name = self.test_name_list[index]

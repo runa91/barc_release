@@ -397,7 +397,7 @@ def do_visual_epoch(val_loader, model, device, data_info, flip=False, quiet=Fals
                         img_name = str(index) + '_' + str(ind_img)
                     visualizations = model.render_vis_nograd(vertices=output_reproj['vertices_smal'],
                                                             focal_lengths=output_unnorm['flength'],
-                                                            color=0)    # 2)
+                                                            color=0)    #0: light blue   2: white)
                     # save image with predicted keypoints
                     out_path = save_imgs_path + '/keypoints_pred_' + img_name + '.png'
                     pred_unp = (output['keypoints_norm'][ind_img, :, :] + 1.) / 2 * (data_info.image_size - 1)

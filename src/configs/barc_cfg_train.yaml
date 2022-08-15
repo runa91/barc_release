@@ -1,8 +1,8 @@
 
 paths:
-  ROOT_OUT_PATH: './results/'
-  ROOT_CHECKPOINT_PATH: './checkpoint/'
-  MODELPATH_NORMFLOW: './checkpoint/barc_normflow_pret/rgbddog_v3_model.pt'
+  ROOT_OUT_PATH: '/data/851/barc_npet/results/'
+  ROOT_CHECKPOINT_PATH: '/data/851/barc_npet/checkpoint/'
+  MODELPATH_NORMFLOW: '/data/851/barc_npet/checkpoint/cvpr_normflow_pret/rgbddog_v3_model.pt'
 
 optim:
   LR: 5e-4

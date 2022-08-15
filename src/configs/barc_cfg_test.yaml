@@ -1,8 +1,8 @@
 
 paths:
-  ROOT_OUT_PATH: './results/'
-  ROOT_CHECKPOINT_PATH: './checkpoint/'
-  MODELPATH_NORMFLOW: './checkpoint/barc_normflow_pret/rgbddog_v3_model.pt'
+  ROOT_OUT_PATH: '/data/851/barc_npet/results/'
+  ROOT_CHECKPOINT_PATH: '/data/851/barc_npet/checkpoint/'
+  MODELPATH_NORMFLOW: '/data/851/barc_npet/checkpoint/barc_normflow_pret/rgbddog_v3_model.pt'
   
 optim:
   BATCH_SIZE: 12       # keep 12 (needs to be an even number, as we have a custom data sampler)

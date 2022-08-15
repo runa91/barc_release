@@ -1,5 +1,7 @@
 
 #custom 
+*.out
+datasets/
 checkpoint
 debugging
 src/smal_pytorch/smal_data/optional
@@ -15,6 +17,7 @@ src/smal_pytorch/smal_data/optional
 __pycache__/
 *.py[cod]
 *$py.class
+*.json
 
 # C extensions
 *.so

@@ -82,7 +82,7 @@ def main(args):
     else:
         final_epoch = 'e' + str(epoch)
         out_sub_name = prefix + cfg.data.VAL_OPT + '_' + final_epoch
-    save_imgs_path = os.path.join(os.path.dirname(path_model_file_complete).replace(cfg.paths.ROOT_CHECKPOINT_PATH, cfg.paths.ROOT_OUT_PATH + 'results/'), out_sub_name)
+    save_imgs_path = os.path.join(os.path.dirname(path_model_file_complete).replace(cfg.paths.ROOT_CHECKPOINT_PATH, cfg.paths.ROOT_OUT_PATH ), out_sub_name)
     print('epoch: ' + str(epoch))
     print('best IoU score: ' + str(checkpoint_complete['best_acc']*100))
     print('path to save images: ' + save_imgs_path)
@@ -91,17 +91,18 @@ def main(args):
 
     # Initialise dataloader
     if cfg.data.DATASET == 'AKC':
-        val_dataset = AKC(image_path=None, is_train=False, dataset_mode='complete')
+        val_dataset = AKC(image_path=args.img_path, is_train=False, dataset_mode='complete')
     elif cfg.data.DATASET == 'stanext24':
         if cfg.data.VAL_OPT in ['val', 'test']:
-            val_dataset = StanExt(image_path=None, is_train=False, dataset_mode='complete', V12=cfg.data.V12, val_opt=cfg.data.VAL_OPT)
+            val_dataset = StanExt(image_path=args.img_path, is_train=False, dataset_mode='complete', V12=cfg.data.V12, val_opt=cfg.data.VAL_OPT)
         elif cfg.data.VAL_OPT == 'train':
             val_dataset = StanExt(image_path=None, is_train=True, do_augment='no', dataset_mode='complete', V12=cfg.data.V12)
             test_name_list = val_dataset.train_name_list            
     elif cfg.data.DATASET == 'ImgCrops':
-        val_dataset = ImgCrops(image_path=None, is_train=False, dataset_mode='complete')
+        print(f'imgs in path: args.img_path:{args.img_path}')
+        val_dataset = ImgCrops(image_path=args.img_path, is_train=False, dataset_mode='complete')
     elif cfg.data.DATASET == 'RendData3D':
-        val_dataset = RendData3D(image_path=None, is_train=False, dataset_mode='complete')
+        val_dataset = RendData3D(image_path=args.img_path, is_train=False, dataset_mode='complete')
     else:
         raise NotImplementedError
     test_name_list = val_dataset.test_name_list
@@ -136,6 +137,6 @@ if __name__ == '__main__':
     parser.add_argument('--metrics', '-m', metavar='METRICS', default='all',
                         choices=['all', None],
                         help='model architecture')        
-    '''parser.add_argument('--image_folder_crops', '-ifc', type=str, metavar='PATH',
-                        help='folder that contains the test image crops') '''       
+    parser.add_argument('--img_path', '-ifc', type=str, metavar='PATH',
+                        help='folder that contains the test image crops')      
     main(parser.parse_args())

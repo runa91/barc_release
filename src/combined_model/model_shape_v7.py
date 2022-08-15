@@ -8,8 +8,10 @@ from torch import nn
 from torch.nn.parameter import Parameter
 from kornia.geometry.subpix import dsnt     # kornia 0.4.0
 
+
 import os
 import sys
+import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from stacked_hourglass.utils.evaluation import get_preds_soft
 from stacked_hourglass import hg1, hg2, hg8
@@ -303,7 +305,8 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         self.register_buffer('mean_dog_bone_lengths', torch.tensor(MEAN_DOG_BONE_LENGTHS_NO_RED, dtype=torch.float32))
         p_dropout = 0.2      # 0.5     
         # ------------------------------ SMAL MODEL ------------------------------
-        self.smal = SMAL(template_name='neutral')       
+        self.smal = SMAL(template_name='neutral') 
+        print(f"------------------------------self.smal: {self.smal}, {type(self.smal)}")      
         # New for rendering without tail
         f_np = self.smal.faces.detach().cpu().numpy()
         self.f_no_tail_np = f_np[np.isin(f_np[:,:], VERTEX_IDS_TAIL).sum(axis=1)==0, :]
@@ -434,6 +437,36 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             pred_flength[pred_flength_orig<=0] = norm_dict['flength_mean'][None, :]
 
         # ------------------------------ RENDERING ------------------------------
+                ## save smal input to json
+        # print(f"pred_betas:{type(pred_betas)}   {pred_betas}")
+        smal_pms=[]
+        barc_json_path="smal_pms_barc_5555.json"
+        if os.path.exists(barc_json_path):
+            with open(barc_json_path, 'r', encoding ='utf8') as f:
+                smal_pms=json.load(f)
+        preds4={}
+        preds4['pose'] = pred_pose[0].reshape((1,315)).cpu().tolist()        
+        preds4['betas'] = pred_betas[0].reshape((1,len(pred_betas[0]))).cpu().tolist()
+        # preds4['camera'] = "null"
+        preds4['trans'] = pred_trans[0].reshape((1,3)).cpu().tolist()
+        
+        # print(f"{len(pose_rot6d_mean_zeros[0])} pose_rot6d_mean_zeros[0].shape  {pose_rot6d_mean_zeros[0].shape}")
+        preds4['pose_rot6d_mean_zeros[0].shape']=f"{pose_rot6d_mean_zeros[0].shape}"
+        preds4['pose_rot6d_mean_zeros']=pose_rot6d_mean_zeros[0].reshape((1,210)).cpu().tolist()
+        preds4['pose_output']=output['pose'][0].reshape((1,210)).cpu().tolist()
+        preds4['pred_pose_rot6d']=pred_pose_rot6d[0].reshape((1,210)).cpu().tolist()
+        preds4['pred_betas_limbs'] = pred_betas_limbs[0].reshape((1,7)).cpu().tolist()
+        preds4['flength_unnorm'] =pred_flength.tolist()   
+        preds4['flength'] =  output['flength'].tolist() 
+        preds4['breeds']=pred_breed.cpu().tolist()                
+        # print(f"preds4.shape:{len(preds4)} \n ")
+        smal_pms.append(preds4)
+        # print(f"len(smal_pms):{len(smal_pms)}  \n {smal_pms}")
+
+        # print(f"pred_betas_json: {pred_betas_json}")
+        with open(barc_json_path, 'w', encoding ='utf8') as f:
+            json.dump(smal_pms,f)
+
         # get 3d model (SMAL)
         V, keyp_green_3d, _ = self.smal(beta=pred_betas, betas_limbs=pred_betas_limbs, pose=pred_pose, trans=pred_trans, get_skin=True, keyp_conf='green', shapedirs_sel=shapedirs_sel)
         keyp_3d = keyp_green_3d[:, :self.n_keyp, :]     # (bs, 20, 3)
