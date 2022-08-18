@@ -12,6 +12,7 @@ src/smal_pytorch/smal_data/optional
 *_orig.py
 *_orig.yaml
 *copy.py
+result_profile.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

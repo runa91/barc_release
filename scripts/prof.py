@@ -1,3 +1,6 @@
+    ### useage:
+    ## python3 -m cProfile -o my_output_file.out -s calls scripts/prof.py
+
 import profile
 
 import argparse
@@ -12,6 +15,7 @@ from torch.nn import DataParallel
 from torch.utils.data import DataLoader
 from collections import OrderedDict
 import glob
+import time
 from dominate import document
 from dominate.tags import *
 
@@ -25,6 +29,16 @@ from stacked_hourglass.datasets.imgcrops import ImgCrops
 from combined_model.train_main_image_to_3d_withbreedrel import do_visual_epoch
 from combined_model.model_shape_v7 import ModelImageTo3d_withshape_withproj 
 from configs.barc_cfg_defaults import get_cfg_defaults, update_cfg_global_with_yaml, get_cfg_global_updated
+def ckpt_time(ckpt=None, display=0, desc=''):
+    if not ckpt:
+        return time.time()
+    else:
+        if display:
+            print(desc + ' consume time {:0.4f}'.format(time.time() - float(ckpt)))
+        return time.time() - float(ckpt), time.time()
+## usage sample:    
+# time1=ckpt_time()
+# ckpt,time2=ckpt_time(time1,display=True,desc="====init model:complete_model = ModelImageTo3d_withshape_withproj")
 
 
 def main(args):
@@ -37,7 +51,7 @@ def main(args):
     cfg = get_cfg_global_updated()
 
     # Select the hardware device to use for inference.
-    if torch.cuda.is_available() and cfg.device=='cuda':
+    if torch.cuda.is_available() and cfg.device=='cuda' and False:
         device = torch.device('cuda', torch.cuda.current_device())
         torch.backends.cudnn.benchmark = True
     else:
@@ -49,6 +63,7 @@ def main(args):
     torch.set_grad_enabled(False)
 
     # prepare complete model
+    time1=ckpt_time()
     complete_model = ModelImageTo3d_withshape_withproj(
         num_stage_comb=cfg.params.NUM_STAGE_COMB, num_stage_heads=cfg.params.NUM_STAGE_HEADS, \
         num_stage_heads_pose=cfg.params.NUM_STAGE_HEADS_POSE, trans_sep=cfg.params.TRANS_SEP, \
@@ -59,7 +74,6 @@ def main(args):
         n_segbps=cfg.params.N_SEGBPS, add_segbps_to_3d_input=cfg.params.ADD_SEGBPS_TO_3D_INPUT, add_partseg=cfg.params.ADD_PARTSEG, n_partseg=cfg.params.N_PARTSEG, \
         fix_flength=cfg.params.FIX_FLENGTH, structure_z_to_betas=cfg.params.STRUCTURE_Z_TO_B, structure_pose_net=cfg.params.STRUCTURE_POSE_NET,
         nf_version=cfg.params.NF_VERSION) 
-
     # load trained model
     print(path_model_file_complete)
     assert os.path.isfile(path_model_file_complete)
@@ -68,6 +82,7 @@ def main(args):
     state_dict_complete = checkpoint_complete['state_dict']
     complete_model.load_state_dict(state_dict_complete, strict=False)        
     complete_model = complete_model.to(device)
+    ckpt,time2=ckpt_time(time1,display=True,desc="====init model:complete_model = ModelImageTo3d_withshape_withproj")
 
     # prepare output folder name
     prefix = cfg.data.DATASET + '_'
@@ -90,6 +105,8 @@ def main(args):
         os.makedirs(save_imgs_path)
 
     # Initialise dataloader
+    ckpt,time3=ckpt_time(time2,display=True,desc="====prepare path:")
+
     if cfg.data.DATASET == 'AKC':
         val_dataset = AKC(image_path=args.img_path, is_train=False, dataset_mode='complete')
     elif cfg.data.DATASET == 'stanext24':
@@ -108,6 +125,7 @@ def main(args):
     test_name_list = val_dataset.test_name_list
     val_loader = DataLoader(val_dataset, batch_size=cfg.optim.BATCH_SIZE, shuffle=False,
                             num_workers=args.workers, pin_memory=True, drop_last=False)     # drop_last=True)
+    ckpt,time4=ckpt_time(time3,display=True,desc="====prepare datasets:")
 
     # run visual evaluation
     #   remark: take ACC_Joints and DATA_INFO from StanExt as this is the training dataset
@@ -120,6 +138,7 @@ def main(args):
                         test_name_list=test_name_list,
                         render_all=cfg.params.RENDER_ALL,
                         pck_thresh=cfg.params.PCK_THRESH)
+    ckpt,time5=ckpt_time(time4,display=True,desc="====batch vis  do_visual_epoch:")
 
 
 if __name__ == '__main__':
@@ -128,18 +147,18 @@ if __name__ == '__main__':
     # python scripts/visualize_image_to_3d_withshape.py --workers 12 --config barc_cfg_visualization.yaml --model-file-complete=barc_new_v2/model_best.pth.tar
 
     parser = argparse.ArgumentParser(description='Evaluate a stacked hourglass model.')
-    parser.add_argument('--model-file-complete', default='', type=str, metavar='PATH',
+    parser.add_argument('--model-file-complete', default='barc_complete/model_best.pth.tar', type=str, metavar='PATH',
                         help='path to saved model weights')
-    parser.add_argument('--config', '-cg', default='barc_cfg_test.yaml', type=str, metavar='PATH',
+    parser.add_argument('--config', '-cg', default='barc_cfg_visualization.yaml', type=str, metavar='PATH',
                         help='name of config file (default: barc_cfg_test.yaml within src/configs folder)')
     parser.add_argument('--workers', default=4, type=int, metavar='N',
                         help='number of data loading workers')
     parser.add_argument('--metrics', '-m', metavar='METRICS', default='all',
                         choices=['all', None],
                         help='model architecture')        
-    parser.add_argument('--img_path', '-ifc', type=str, metavar='PATH',
+    parser.add_argument('--img_path', '-ifc', default='/data/851/barc_npet/datasets/barc_input/' , type=str, metavar='PATH',
                         help='folder that contains the test image crops')      
-    # main(parser.parse_args())
-    result_profile=profile.run("main(parser.parse_args())")
+    main(parser.parse_args())
+    # result_profile=profile.run("main(parser.parse_args())")
     # profile.dump_stats("result_profile.txt")
     # print(result_profile,file="result_profile.txt")

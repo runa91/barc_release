@@ -23,7 +23,17 @@ from smal_pytorch.renderer.differentiable_renderer import SilhRenderer
 from bps_2d.bps_for_segmentation import SegBPS
 from configs.SMAL_configs import UNITY_SMAL_SHAPE_PRIOR_DOGS as SHAPE_PRIOR
 from configs.SMAL_configs import MEAN_DOG_BONE_LENGTHS_NO_RED, VERTEX_IDS_TAIL
-
+import time
+def ckpt_time_v1(ckpt=None, display=0, desc=''):
+    if not ckpt:
+        return time.time()
+    else:
+        if display:
+            print(desc + ' consume time {:0.4f}'.format(time.time() - float(ckpt)))
+        return time.time() - float(ckpt), time.time()
+## usage sample:    
+# time1=ckpt_time_v1()
+# ckpt,time2=ckpt_time_v1(time1,display=True,desc="====init model:complete_model = ModelImageTo3d_withshape_withproj")
 
 
 class SmallLinear(nn.Module):
@@ -345,6 +355,8 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         self.silh_renderer = SilhRenderer(image_size) 
 
     def forward(self, input_img, norm_dict=None, bone_lengths_prepared=None, betas=None):
+        time1=ckpt_time_v1()
+
         batch_size = input_img.shape[0]
         device = input_img.device
         # ------------------------------ STACKED HOUR GLASS ------------------------------
@@ -360,6 +372,8 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         if self.threshold_scores is not None:
             scores[scores>self.threshold_scores] = 1.0
             scores[scores<=self.threshold_scores] = 0.0
+        ckpt,time2=ckpt_time_v1(time1,display=True,desc="====forward: eypoints_norm, scores = get_preds_soft(last_heatmap...):")
+
         # ------------------------------ LEARNABLE SHAPE MODEL ------------------------------
         # in our cvpr 2022 paper we do not change the shapedirs
         # learnable_sd_complete has shape (3889, 3, n_sd)
@@ -383,6 +397,9 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             else:
                 assert (bone_lengths_prepared is None)
                 bone_lengths_prepared = self.smal.caclulate_bone_lengths(pred_betas, pred_betas_limbs, shapedirs_sel=shapedirs_sel, short=True)
+        
+        ckpt,time3=ckpt_time_v1(time2,display=True,desc="====forward:         # - calculate bone lengths:")
+
         # ------------------------------ LINEAR 3D MODEL ------------------------------
         # 3d model -> from image to 3d parameters {2d keypoints from heatmap, pose, trans, flength}
         # prepare input for 2d-to-3d network
@@ -409,6 +426,8 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             input_vec = torch.cat((keypoints_prepared.reshape((batch_size, -1)), bone_lengths_prepared), axis=1)  
         # predict 3d parameters (those are normalized, we need to correct mean and std in a next step)
         output = self.model_3d(input_vec)      
+        ckpt,time4=ckpt_time_v1(time3,display=True,desc="====forward:predict 3d parameters:")
+
         # add predicted keypoints to the output dict
         output['keypoints_norm'] = keypoints_norm
         output['keypoints_scores'] = scores
@@ -435,6 +454,7 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             pred_flength_orig = output['flength'] * norm_dict['flength_std'][None, :] + norm_dict['flength_mean'][None, :]   # (bs, 1)
             pred_flength = pred_flength_orig.clone()  # torch.abs(pred_flength_orig)
             pred_flength[pred_flength_orig<=0] = norm_dict['flength_mean'][None, :]
+        ckpt,time5=ckpt_time_v1(time4,display=True,desc="====forward:denormalize 3d parameters:")
 
         # ------------------------------ RENDERING ------------------------------
                 ## save smal input to json
@@ -488,6 +508,7 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         else:
             partseg_images = None
             partseg_images_hg = None
+        ckpt,time6=ckpt_time_v1(time5,display=True,desc="====forward:RENDERING:")
 
         # ------------------------------ PREPARE OUTPUT ------------------------------
         # create output dictionarys
@@ -515,6 +536,7 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
                         'partseg_images_rend': partseg_images,
                         'partseg_images_hg_nograd': partseg_images_hg,
                         'normflow_z': output['normflow_z']}
+        ckpt,time7=ckpt_time_v1(time6,display=True,desc="====forward:PREPARE OUTPUT :")
 
         return output, output_unnorm, output_reproj
 
