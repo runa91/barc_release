@@ -33,7 +33,7 @@ def ckpt_time_v1(ckpt=None, display=0, desc=''):
         return time.time() - float(ckpt), time.time()
 ## usage sample:    
 # time1=ckpt_time_v1()
-# ckpt,time2=ckpt_time_v1(time1,display=True,desc="====init model:complete_model = ModelImageTo3d_withshape_withproj")
+# ckpt,time2=ckpt_time_v1(time1,display=True,desc="====")
 
 
 class SmallLinear(nn.Module):
@@ -153,16 +153,21 @@ class ModelShapeAndBreed(nn.Module):
         if seg_prep is None:
             seg_prep = self.soft_max(seg_raw)[:, 1:2, :, :] - 0.5       
         input_img_and_seg = torch.cat((img, seg_prep), axis=1)
+        time_res1=ckpt_time_v1()
         res_output = self.resnet(input_img_and_seg)
+        ckpt,time_res2=ckpt_time_v1(time_res1,display=True,desc="====resnet infer")
         dog_breed_output = self.linear_breeds(res_output) 
+        ckpt,time_breed=ckpt_time_v1(time_res2,display=True,desc="====linear_breeds infer")
         if self.structure_z_to_betas == 'inn':
             shape_output_orig, shape_limbs_output_orig = self.linear_betas_and_betas_limbs(res_output)
+            ckpt,time_inn=ckpt_time_v1(time_breed,display=True,desc="====time_inn infer")
         else:
             shape_output_orig = self.linear_betas(res_output) * 0.1
             betas_mean = torch.tensor(self.betas_mean_np).float().to(img.device)
             shape_output = shape_output_orig + betas_mean[None, 0:self.n_betas]
             shape_limbs_output_orig = self.linear_betas_limbs(res_output)
             shape_limbs_output = shape_limbs_output_orig * 0.1
+            ckpt,time_linear_betas=ckpt_time_v1(time_breed,display=True,desc="====time_linear_betas infer")
         output_dict = {'z': res_output,
                         'breeds': dog_breed_output,
                         'betas': shape_output_orig,
@@ -255,7 +260,10 @@ class ModelImageToBreed(nn.Module):
         batch_size = input_img.shape[0]
         device = input_img.device
         # ------------------------------ STACKED HOUR GLASS ------------------------------
+        time_hg1=ckpt_time_v1()
         hourglass_out_dict = self.stacked_hourglass(input_img)
+        ckpt,time_hg2=ckpt_time_v1(time_hg1,display=True,desc="====stacked_hourglass infer")
+
         last_seg = hourglass_out_dict['seg_final']
         last_heatmap = hourglass_out_dict['out_list_kp'][-1] 
         # - prepare keypoints (from heatmap)
@@ -270,7 +278,9 @@ class ModelImageToBreed(nn.Module):
         # ------------------------------ SHAPE AND BREED MODEL ------------------------------
         # breed_model takes as input the image as well as the predicted segmentation map 
         #     -> we need to split up ModelImageTo3d, such that we can use the silhouette
+        time_breed1=ckpt_time_v1()
         resnet_output = self.breed_model(img=input_img, seg_raw=last_seg)
+        ckpt,time_breed2=ckpt_time_v1(time_breed1,display=True,desc="====breed_model infer. For breeds betas small_output")
         pred_breed = resnet_output['breeds']       # (bs, n_breeds)
         pred_betas = resnet_output['betas']
         pred_betas_limbs = resnet_output['betas_limbs']
@@ -356,11 +366,12 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
 
     def forward(self, input_img, norm_dict=None, bone_lengths_prepared=None, betas=None):
         time1=ckpt_time_v1()
-
         batch_size = input_img.shape[0]
         device = input_img.device
         # ------------------------------ STACKED HOUR GLASS ------------------------------
+        time_stacked_hourglass1=ckpt_time_v1()
         hourglass_out_dict = self.stacked_hourglass(input_img)
+        ckpt,time_stacked_hourglass2=ckpt_time_v1(time_stacked_hourglass1,display=True,desc="====ModelImageTo3d_withshape_withproj time_stacked_hourglass2 infer:")
         last_seg = hourglass_out_dict['seg_final']
         last_heatmap = hourglass_out_dict['out_list_kp'][-1] 
         # - prepare keypoints (from heatmap)
@@ -383,7 +394,9 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         # ------------------------------ SHAPE AND BREED MODEL ------------------------------
         # breed_model takes as input the image as well as the predicted segmentation map 
         #     -> we need to split up ModelImageTo3d, such that we can use the silhouette
+        time_breed1=ckpt_time_v1()
         resnet_output = self.breed_model(img=input_img, seg_raw=last_seg)
+        ckpt,time_breed2=ckpt_time_v1(time_breed1,display=True,desc="====ModelImageTo3d_withshape_withproj breed_model infer: breed,z,beta,beta_limbs")
         pred_breed = resnet_output['breeds']       # (bs, n_breeds)
         pred_z = resnet_output['z']
         # - prepare shape
@@ -425,7 +438,9 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         else:
             input_vec = torch.cat((keypoints_prepared.reshape((batch_size, -1)), bone_lengths_prepared), axis=1)  
         # predict 3d parameters (those are normalized, we need to correct mean and std in a next step)
-        output = self.model_3d(input_vec)      
+        time_3d1=ckpt_time_v1()
+        output = self.model_3d(input_vec)  
+        ckpt,time_3d2=ckpt_time_v1(time_3d1,display=True,desc="====infer: predict 3d parameters infer:")    
         ckpt,time4=ckpt_time_v1(time3,display=True,desc="====forward:predict 3d parameters:")
 
         # add predicted keypoints to the output dict
@@ -465,20 +480,20 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             with open(barc_json_path, 'r', encoding ='utf8') as f:
                 smal_pms=json.load(f)
         preds4={}
-        preds4['pose'] = pred_pose[0].reshape((1,315)).cpu().tolist()        
-        preds4['betas'] = pred_betas[0].reshape((1,len(pred_betas[0]))).cpu().tolist()
+        preds4['pose'] = pred_pose[0].reshape(-1).cpu().tolist()        
+        preds4['betas'] = pred_betas[0].reshape(-1).cpu().tolist()
         # preds4['camera'] = "null"
-        preds4['trans'] = pred_trans[0].reshape((1,3)).cpu().tolist()
+        preds4['trans'] = pred_trans[0].reshape(-1).cpu().tolist()
         
         # print(f"{len(pose_rot6d_mean_zeros[0])} pose_rot6d_mean_zeros[0].shape  {pose_rot6d_mean_zeros[0].shape}")
-        preds4['pose_rot6d_mean_zeros[0].shape']=f"{pose_rot6d_mean_zeros[0].shape}"
-        preds4['pose_rot6d_mean_zeros']=pose_rot6d_mean_zeros[0].reshape((1,210)).cpu().tolist()
-        preds4['pose_output']=output['pose'][0].reshape((1,210)).cpu().tolist()
-        preds4['pred_pose_rot6d']=pred_pose_rot6d[0].reshape((1,210)).cpu().tolist()
-        preds4['pred_betas_limbs'] = pred_betas_limbs[0].reshape((1,7)).cpu().tolist()
-        preds4['flength_unnorm'] =pred_flength.tolist()   
-        preds4['flength'] =  output['flength'].tolist() 
-        preds4['breeds']=pred_breed.cpu().tolist()                
+        # preds4['pose_rot6d_mean_zeros[0].shape']=f"{pose_rot6d_mean_zeros[0].shape}"
+        # preds4['pose_rot6d_mean_zeros']=pose_rot6d_mean_zeros[0].reshape(1,210).cpu().tolist()
+        # preds4['pose_output']=output['pose'][0].reshape(1,210).cpu().tolist()
+        # preds4['pred_pose_rot6d']=pred_pose_rot6d[0].reshape(1,210).cpu().tolist()
+        # preds4['pred_betas_limbs'] = pred_betas_limbs[0].reshape(1,7).cpu().tolist()
+        # preds4['flength_unnorm'] =pred_flength.tolist()   
+        preds4['flength'] =  output['flength'].reshape(-1).tolist() 
+        preds4['breeds']=pred_breed.cpu().reshape(-1).tolist()                
         # print(f"preds4.shape:{len(preds4)} \n ")
         smal_pms.append(preds4)
         # print(f"len(smal_pms):{len(smal_pms)}  \n {smal_pms}")
@@ -488,8 +503,10 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             json.dump(smal_pms,f)
 
         # get 3d model (SMAL)
+        time_3d_smal1=ckpt_time_v1()
         V, keyp_green_3d, _ = self.smal(beta=pred_betas, betas_limbs=pred_betas_limbs, pose=pred_pose, trans=pred_trans, get_skin=True, keyp_conf='green', shapedirs_sel=shapedirs_sel)
         keyp_3d = keyp_green_3d[:, :self.n_keyp, :]     # (bs, 20, 3)
+        ckpt,time_3d_smal2=ckpt_time_v1(time_3d_smal1,display=True,desc="====rendering :get 3d model (SMAL)")
         # render silhouette
         faces_prep = self.smal.faces.unsqueeze(0).expand((batch_size, -1, -1))
         if not self.silh_no_tail:

@@ -51,7 +51,7 @@ def main(args):
     cfg = get_cfg_global_updated()
 
     # Select the hardware device to use for inference.
-    if torch.cuda.is_available() and cfg.device=='cuda' and False:
+    if torch.cuda.is_available() and cfg.device=='cuda':
         device = torch.device('cuda', torch.cuda.current_device())
         torch.backends.cudnn.benchmark = True
     else:
