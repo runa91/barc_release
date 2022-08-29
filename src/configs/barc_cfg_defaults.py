@@ -18,7 +18,7 @@ _C.paths.MODELPATH_NORMFLOW = abs_barc_dir + '/checkpoint/cvpr_normflow_pret/rgb
 
 ## parameter settings
 _C.params = CN()
-_C.params.ARCH = 'hg8'    
+_C.params.ARCH = 'hg2'    
 _C.params.STRUCTURE_POSE_NET = 'normflow'     # 'default'   # 'vae' 
 _C.params.NF_VERSION = 3
 _C.params.N_JOINTS = 35   

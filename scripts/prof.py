@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # python scripts/visualize_image_to_3d_withshape.py --workers 12 --config barc_cfg_visualization.yaml --model-file-complete=barc_new_v2/model_best.pth.tar
 
     parser = argparse.ArgumentParser(description='Evaluate a stacked hourglass model.')
-    parser.add_argument('--model-file-complete', default='barc_complete/model_best.pth.tar', type=str, metavar='PATH',
+    parser.add_argument('--model-file-complete', default='model128_hg1_noprew/model_best.pth.tar', type=str, metavar='PATH',
                         help='path to saved model weights')
     parser.add_argument('--config', '-cg', default='barc_cfg_visualization.yaml', type=str, metavar='PATH',
                         help='name of config file (default: barc_cfg_test.yaml within src/configs folder)')

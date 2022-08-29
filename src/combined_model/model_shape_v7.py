@@ -252,6 +252,10 @@ class ModelImageToBreed(nn.Module):
         # ------------------------------ STACKED HOUR GLASS ------------------------------        
         if arch == 'hg8':
             self.stacked_hourglass = hg8(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
+        if arch == 'hg2':
+            self.stacked_hourglass = hg2(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
+        if arch == 'hg1':
+            self.stacked_hourglass = hg1(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
         else:
             raise Exception('unrecognised model architecture: ' + arch)
         # ------------------------------ SHAPE AND BREED MODEL ------------------------------
@@ -337,6 +341,10 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         # ------------------------------ STACKED HOUR GLASS ------------------------------        
         if arch == 'hg8':
             self.stacked_hourglass = hg8(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
+        elif arch == 'hg2':
+            self.stacked_hourglass = hg2(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
+        elif arch == 'hg1':
+            self.stacked_hourglass = hg1(pretrained=False, num_classes=self.n_classes, num_partseg=self.n_partseg, upsample_seg=self.upsample_seg, add_partseg=self.add_partseg)
         else:
             raise Exception('unrecognised model architecture: ' + arch)
         # ------------------------------ SHAPE AND BREED MODEL ------------------------------
