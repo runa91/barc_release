@@ -225,7 +225,8 @@ class HourglassNet(nn.Module):
                 score_ = self.score_[i](score)
                 x = x + fc_ + score_
 
-        if self.upsample_seg:
+        print(f"self.upsample_seg:{self.upsample_seg} self.add_partseg:{self.add_partseg}")
+        if self.upsample_seg:  ## True
             # PLAN: add a residual to the upsampled version of the segmentation image
             # upsample predicted segmentation
             seg_score = score[:, -2:, :, :]
@@ -261,7 +262,7 @@ class HourglassNet(nn.Module):
                             'partseg_final': partseg_final
                             }
                 return out_dict
-            else:
+            else:            ### with seg. not partseg.
                 out_dict = {'out_list_kp': out,
                             'out_list_seg': out,
                             'seg_final': seg_final
