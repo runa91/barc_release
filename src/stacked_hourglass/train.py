@@ -25,7 +25,7 @@ def do_training_step(model, optimiser, input, target, data_info, target_weight=N
         print(f"shape seg_target:{seg_target.shape}   target shape:{target.shape}")
         # Backward pass and parameter update.
         print(f"\nloss_seg:{loss_seg} \nloss_kp:{loss_kp}")
-        loss=loss_seg+loss_kp
+        loss=0.1*loss_seg+loss_kp
         # loss=loss_kp
         optimiser.zero_grad()
         loss.backward()
@@ -81,7 +81,7 @@ def do_validation_step(model, input, target, data_info, target_weight=None, flip
     print(f"shape seg_target:{seg_target.shape}   target:{target.shape}")
     # Backward pass and parameter update.
     print(f"\nloss_seg:{loss_seg} \nloss_kp:{loss_kp}")
-    loss=loss_seg+loss_kp
+    loss=0.1*loss_seg+loss_kp
     # Get the heatmaps.
     if flip:
         # If `flip` is true, perform horizontally flipped inference as well. This should

@@ -1,4 +1,4 @@
-##  conda activate  barc 
+##  conda activate  barc   hg2_seg+kp
 CUDA_VISIBLE_DEVICES=1,2,3 \
 python3 scripts/train_hg.py \
     --arch=hg2 \
