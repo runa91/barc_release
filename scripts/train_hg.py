@@ -27,7 +27,7 @@ def main(args):
     path_config = os.path.join(get_cfg_defaults().barc_dir, 'src', 'configs', args.config)
     update_cfg_global_with_yaml(path_config)
     cfg = get_cfg_global_updated()
-    print(f"cfg {cfg}")
+    print(f"cfg:\n{cfg}")
     if torch.cuda.is_available():
         device = torch.device('cuda', torch.cuda.current_device())
         torch.backends.cudnn.benchmark = True
@@ -50,12 +50,15 @@ def main(args):
         model = hg8(pretrained=False,num_classes=cfg.params.N_CLASSES, num_partseg=cfg.params.N_PARTSEG, upsample_seg=cfg.params.UPSAMPLE_SEG, add_partseg=cfg.params.ADD_PARTSEG)
     else:
         raise Exception('unrecognised model architecture: ' + args.arch)
-
+    # print(f"model:\n{model}")
+    print(f"model:{type(model)} )")
     model = DataParallel(model).to(device)
-
+    # print(f"DataParalleled model:\n{model}")
+    print(f"DataParalleled model:{type(model)} )")
     optimizer = RMSprop(model.parameters(), lr=args.lr, momentum=args.momentum,
                         weight_decay=args.weight_decay)
-
+                    
+    # print(f"optimizer:\n{optimizer}")
     best_acc = 0
 
     # optionally resume from a checkpoint
@@ -63,6 +66,15 @@ def main(args):
         assert os.path.isfile(args.resume)
         print("=> loading checkpoint '{}'".format(args.resume))
         checkpoint = torch.load(args.resume)
+        # print(f"checkpoint:{checkpoint}")
+        print(f"\ncheckpoint epoch:{checkpoint['epoch']}  {checkpoint.keys()}")
+        print(f"\ncheckpoint  arch:\n{checkpoint['arch']}" )
+        # print(f"\ncheckpoint state_dict:\n{checkpoint['state_dict']}" )
+        # print(f"\ncheckpoint best_acc:\n{checkpoint['best_acc']}" )
+        # print(f"\ncheckpoint optimizer:\n{checkpoint['optimizer'].keys()}  {len(checkpoint['optimizer'])}" )
+        # print(f"\ncheckpoint optimizer ['state'].keys():\n{checkpoint['optimizer']['state'].keys()}" )
+        # print(f"\ncheckpoint optimizer ['param_groups'][0].keys():\n{checkpoint['optimizer']['param_groups'][0].keys()}" )
+
         args.start_epoch = checkpoint['epoch']
         best_acc = checkpoint['best_acc']
         model.load_state_dict(checkpoint['state_dict'])
@@ -84,7 +96,7 @@ def main(args):
         num_workers=args.workers, pin_memory=True
     )
 
-    val_dataset = StanExt(args.image_path, is_train=False, inp_res=args.input_shape,V12=True,dataset_mode='keyp_and_seg')
+    val_dataset = StanExt(args.image_path, is_train=False, inp_res=args.input_shape,V12=True,dataset_mode='keyp_and_seg')  ##keyp_and_seg keyp_only
     # val_dataset = Mpii(args.image_path, is_train=False, inp_res=args.input_shape)
     val_loader = DataLoader(
         val_dataset,

@@ -7,33 +7,32 @@ from stacked_hourglass.loss import joints_mse_loss
 from stacked_hourglass.utils.evaluation import accuracy, AverageMeter, final_preds
 from stacked_hourglass.utils.transforms import fliplr, flip_back
 
+# from core.criterion import CrossEntropy, OhemCrossEntropy
+
+# criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
+#                                     weight=train_dataset.class_weights)
 
 def do_training_step(model, optimiser, input, target, data_info, target_weight=None):
     assert model.training, 'model must be in training mode.'
     assert len(input) == len(target), 'input and target must contain the same number of examples.'
-    # print(f"target:{target}")
     with torch.enable_grad():
         # Forward pass and loss calculation.
         output = model(input)
-        # print(f"{output}")
-        print(f"\n len(output):{len(output) }") 
-        # print(f"{output['out_list_kp']}")
-        # print(f"output[0]:{output[0]}")            
-        print(f"output[0]:{len(output['out_list_kp'])}")
-        print(f"output[0]:{output['out_list_kp'][0].shape}")
-        for o in output:
-            print(f"\n o:\n {o}")
-        loss = sum(joints_mse_loss(o, target, target_weight) for o in output)
-        # loss_kp=joints_mse_loss(output['out_list_kp'], target, target_weight) 
-        # loss_seg=joints_mse_loss(output['out_list_seg'], target, target_weight)
-        # loss=sum(loss_kp,loss_seg)
+        loss_kp = sum(joints_mse_loss(o, target, target_weight) for o in output['out_list_kp'])
+        seg_crossentropyloss=torch.nn.CrossEntropyLoss()
+        seg_target = torch.argmax(target, dim=1)
+        loss_seg = sum(seg_crossentropyloss(o,seg_target)  for o in output['out_list_seg'])
+        print(f"shape seg_target:{seg_target.shape}   target shape:{target.shape}")
         # Backward pass and parameter update.
-        loss=0
+        print(f"\nloss_seg:{loss_seg} \nloss_kp:{loss_kp}")
+        loss=loss_seg+loss_kp
+        # loss=loss_kp
         optimiser.zero_grad()
         loss.backward()
         optimiser.step()
-
-    return output[-1], loss.item()
+    # print(f"loss.item():{loss.item()}")
+    # print(f"\noutput:{output.keys()} \noutput['out_list_kp']:{output['out_list_kp']}  \noutput['out_list_seg']:{output['out_list_seg']}")
+    return output['out_list_kp'][-1], output['out_list_seg'][-1],loss.item()
 
 
 def do_training_epoch(train_loader, model, device, data_info, optimiser, quiet=False, acc_joints=None):
@@ -52,11 +51,8 @@ def do_training_epoch(train_loader, model, device, data_info, optimiser, quiet=F
     for i, (input, target, meta) in iterable:
         input, target = input.to(device), target.to(device, non_blocking=True)
         target_weight = meta['target_weight'].to(device, non_blocking=True)
-
-        output, loss = do_training_step(model, optimiser, input, target, data_info, target_weight)
-
-        acc = accuracy(output, target, acc_joints)
-
+        output_kp,output_seg, loss = do_training_step(model, optimiser, input, target, data_info, target_weight)
+        acc = accuracy(output_kp, target, acc_joints)
         # measure accuracy and record loss
         losses.update(loss, input.size(0))
         accuracies.update(acc[0], input.size(0))
@@ -77,8 +73,15 @@ def do_validation_step(model, input, target, data_info, target_weight=None, flip
 
     # Forward pass and loss calculation.
     output = model(input)
-    loss = sum(joints_mse_loss(o, target, target_weight) for o in output)
-
+    # loss = sum(joints_mse_loss(o, target, target_weight) for o in output['out_list_kp'])  ##['out_list_kp']
+    loss_kp = sum(joints_mse_loss(o, target, target_weight) for o in output['out_list_kp'])
+    seg_crossentropyloss=torch.nn.CrossEntropyLoss()
+    seg_target = torch.argmax(target, dim=1)
+    loss_seg = sum(seg_crossentropyloss(o,seg_target)  for o in output['out_list_seg'])
+    print(f"shape seg_target:{seg_target.shape}   target:{target.shape}")
+    # Backward pass and parameter update.
+    print(f"\nloss_seg:{loss_seg} \nloss_kp:{loss_kp}")
+    loss=loss_seg+loss_kp
     # Get the heatmaps.
     if flip:
         # If `flip` is true, perform horizontally flipped inference as well. This should
@@ -87,9 +90,9 @@ def do_validation_step(model, input, target, data_info, target_weight=None, flip
         flip_output = model(flip_input)
         flip_output = flip_output[-1].cpu()
         flip_output = flip_back(flip_output.detach(), data_info.hflip_indices)
-        heatmaps = (output[-1].cpu() + flip_output) / 2
+        heatmaps = (output['out_list_kp'][-1].cpu() + flip_output) / 2
     else:
-        heatmaps = output[-1].cpu()
+        heatmaps = output['out_list_kp'][-1].cpu()
 
 
     return heatmaps, loss.item()
