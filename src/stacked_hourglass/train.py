@@ -7,11 +7,6 @@ from stacked_hourglass.loss import joints_mse_loss
 from stacked_hourglass.utils.evaluation import accuracy, AverageMeter, final_preds
 from stacked_hourglass.utils.transforms import fliplr, flip_back
 
-# from core.criterion import CrossEntropy, OhemCrossEntropy
-
-# criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
-#                                     weight=train_dataset.class_weights)
-
 def do_training_step(model, optimiser, input, target, data_info, target_weight=None):
     assert model.training, 'model must be in training mode.'
     assert len(input) == len(target), 'input and target must contain the same number of examples.'
@@ -26,12 +21,9 @@ def do_training_step(model, optimiser, input, target, data_info, target_weight=N
         # Backward pass and parameter update.
         print(f"\nloss_seg:{loss_seg} \nloss_kp:{loss_kp}")
         loss=0.1*loss_seg+loss_kp
-        # loss=loss_kp
         optimiser.zero_grad()
         loss.backward()
         optimiser.step()
-    # print(f"loss.item():{loss.item()}")
-    # print(f"\noutput:{output.keys()} \noutput['out_list_kp']:{output['out_list_kp']}  \noutput['out_list_seg']:{output['out_list_seg']}")
     return output['out_list_kp'][-1], output['out_list_seg'][-1],loss.item()
 
 
@@ -73,7 +65,6 @@ def do_validation_step(model, input, target, data_info, target_weight=None, flip
 
     # Forward pass and loss calculation.
     output = model(input)
-    # loss = sum(joints_mse_loss(o, target, target_weight) for o in output['out_list_kp'])  ##['out_list_kp']
     loss_kp = sum(joints_mse_loss(o, target, target_weight) for o in output['out_list_kp'])
     seg_crossentropyloss=torch.nn.CrossEntropyLoss()
     seg_target = torch.argmax(target, dim=1)
